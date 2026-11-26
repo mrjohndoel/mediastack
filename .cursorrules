@@ -83,7 +83,7 @@ When making automated edits
 - If adding a new app:
   - Mount /data and /config according to conventions.
   - Add Traefik labels consistent with existing patterns.
-  - Decide whether it belongs behind Gluetun (full/mini variants) and configure accordingly.
+  - Decide whether it belongs behind Gluetun (full/mini/no-vpn variants) and configure accordingly.
 - Keep compose files between variants consistent where possible; only differ in Gluetun attachment/ports per the variant’s intent.
 
 Assistant answering preferences

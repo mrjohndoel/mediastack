@@ -18,9 +18,9 @@ tls:
       defaultGeneratedCert:
         resolver: letsencrypt
         domain:
-          main: example.com
+          main: baebar.store
           sans:
-            - "*.example.com"
+            - "*.baebar.store"
   options:
     default:
       minVersion: VersionTLS12
@@ -50,8 +50,8 @@ http:
           - OPTIONS
           - PUT
         accessControlAllowOriginList:
-          - https://example.com
-          - https://*.example.com
+          - https://baebar.store
+          - https://*.baebar.store
         accessControlMaxAge: 100
         addVaryHeader: true
         browserXssFilter: true

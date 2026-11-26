@@ -1,0 +1,211 @@
+#########################################################################
+#########################################################################
+#
+# Filename: dynamic.yaml        Traefik Dynamic Configuration File
+#
+# Replace all "example.com" values with your domain name
+#
+#  i.e.   - main: example.com
+#           sans:
+#             - "*.example.com"
+#
+#########################################################################
+#########################################################################
+
+tls:
+  stores:
+    default:
+      defaultGeneratedCert:
+        resolver: letsencrypt
+        domain:
+          main: baebar.store
+          sans:
+            - "*.baebar.store"
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_AES_256_GCM_SHA384
+        - TLS_CHACHA20_POLY1305_SHA256
+        - TLS_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      curvePreferences:
+        - CurveP521
+        - CurveP384
+      sniStrict: true
+
+http:
+  middlewares:
+    # Relaxed security headers for trusted IPs
+    security-headers-trusted:
+      headers:
+        accessControlAllowCredentials: true
+        accessControlAllowHeaders: "*"
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+          - PATCH
+        accessControlAllowOriginList:
+          - https://baebar.store
+          - https://*.baebar.store
+        accessControlMaxAge: 100
+        addVaryHeader: true
+        browserXssFilter: false          # Relaxed for trusted IPs
+        stsSeconds: 31536000             # Shorter HSTS for trusted IPs
+        stsIncludeSubdomains: true
+        stsPreload: false                # No preload for trusted IPs
+        forceSTSHeader: false            # Not forced for trusted IPs
+        frameDeny: false                 # Allow framing for trusted IPs
+        customFrameOptionsValue: SAMEORIGIN
+        contentTypeNosniff: false        # Relaxed for trusted IPs
+        referrerPolicy: no-referrer-when-downgrade
+        permissionsPolicy: ""            # No restrictions for trusted IPs
+
+    # Strict security headers for untrusted/public IPs
+    security-headers-strict:
+      headers:
+        accessControlAllowCredentials: true
+        accessControlAllowHeaders: "*"
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        accessControlAllowOriginList:
+          - https://baebar.store
+          - https://*.baebar.store
+        accessControlMaxAge: 100
+        addVaryHeader: true
+        browserXssFilter: true           # Strict XSS protection
+        stsSeconds: 63072000             # Long HSTS for public
+        stsIncludeSubdomains: true
+        stsPreload: true                 # Preload for public
+        forceSTSHeader: true             # Force HSTS for public
+        frameDeny: true                  # Deny framing for public
+        customFrameOptionsValue: DENY
+        contentTypeNosniff: true         # Strict content type for public
+        contentSecurityPolicy: "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; img-src 'self' data: https:; connect-src 'self' wss: https:;"
+        referrerPolicy: strict-origin-when-cross-origin
+        permissionsPolicy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
+    # Default security headers (moderate)
+    security-headers:
+      headers:
+        accessControlAllowCredentials: true
+        accessControlAllowHeaders: "*"
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+        accessControlAllowOriginList:
+          - https://baebar.store
+          - https://*.baebar.store
+        accessControlMaxAge: 100
+        addVaryHeader: true
+        browserXssFilter: true
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        frameDeny: true
+        customFrameOptionsValue: SAMEORIGIN
+        contentTypeNosniff: true
+#        contentSecurityPolicy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'
+        referrerPolicy: strict-origin-when-cross-origin
+        permissionsPolicy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
+    authentik-forwardauth:
+      forwardAuth:
+        address: http://authentik:9000/outpost.goauthentik.io/auth/traefik
+        trustForwardHeader: true
+        authResponseHeaders:
+          - X-authentik-username
+          - X-authentik-groups
+          - X-authentik-email
+          - X-authentik-name
+          - X-authentik-uid
+          - X-authentik-jwt
+          - X-authentik-meta-jwks
+          - X-authentik-meta-outpost
+          - X-authentik-meta-provider
+          - X-authentik-meta-app
+          - X-authentik-meta-version
+
+    # IP Allow List for trusted networks/admin access
+    trusted-ips:
+      ipAllowList:
+        sourceRange:
+          - 127.0.0.1/32          # Localhost
+          - 192.168.48.0/24       # Your actual local network
+          - 172.28.10.0/24        # Docker network (from DOCKER_SUBNET)
+          # Add your specific trusted IPs here:
+          - 172.15.100.2/32       # MBA VPN IP (specific IP only)
+          - 103.189.163.222/32    # Your current public IP
+          # - 198.51.100.0/24     # Example: Your VPN subnet
+          # Removed overly broad ranges: 10.0.0.0/8 and 103.62.140.0/24
+
+    # Authentication for trusted IPs (no auth required)
+    trusted-access:
+      ipAllowList:
+        sourceRange:
+          - 127.0.0.1/32          # Localhost
+          - 192.168.48.0/24       # Your actual local network
+          - 172.28.10.0/24        # Docker network (from DOCKER_SUBNET)
+          - 172.15.100.2/32       # MBA VPN IP (specific IP only)
+          - 103.189.163.222/32    # Your current public IP
+
+    # ForwardAuth for non-trusted IPs - requires Authentik authentication
+    conditional-forwardauth:
+      chain:
+        middlewares:
+          - trusted-access
+          - authentik-forwardauth
+
+    # Conditional security headers - relaxed for trusted IPs, strict for others
+    conditional-security:
+      chain:
+        middlewares:
+          - trusted-ips
+          - security-headers-strict
+
+    traefik-bouncer:
+      plugin:
+        crowdsec-bouncer-traefik-plugin:
+          enabled: true
+          defaultDecisionSeconds: 60
+          crowdsecMode: live
+          crowdsecAppsecEnabled: false
+          crowdsecAppsecHost: crowdsec:7422
+          crowdsecAppsecFailureBlock: true
+          crowdsecAppsecUnreachableBlock: true
+          crowdsecLapiKey: 8andilX0JKYIu8z+R4imPkIgG+TMdCttAuMaHrsV7ZU
+          crowdsecLapiHost: crowdsec:8080
+          crowdsecLapiScheme: http
+          crowdsecLapiTLSInsecureVerify: false
+          forwardedHeadersTrustedIPs:
+            - 127.0.0.1/32          # Localhost
+            - 192.168.48.0/24       # Your actual local network
+            - 172.28.10.0/24        # Docker network (from DOCKER_SUBNET)
+            - 172.15.100.2/32       # MBA VPN IP (specific IP only)
+            - 103.189.163.222/32    # Your current public IP
+          clientTrustedIPs:
+            - 127.0.0.1/32          # Localhost
+            - 192.168.48.0/24       # Your actual local network
+            - 172.28.10.0/24        # Docker network (from DOCKER_SUBNET)
+            - 172.15.100.2/32       # MBA VPN IP (specific IP only)
+            - 103.189.163.222/32    # Your current public IP
+
+    # CrowdSec bouncer for non-trusted IPs
+    conditional-crowdsec:
+      chain:
+        middlewares:
+          - trusted-ips
+          - traefik-bouncer
+

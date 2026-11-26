@@ -1,0 +1,221 @@
+#########################################################################
+#########################################################################
+#
+# Filename: traefik-external.yaml     Traefik External Services Configuration File
+#
+# This file routes external requests to services running outside of MediaStack
+# Replace hardcoded domains with ${CLOUDFLARE_DNS_ZONE} variables
+# Update IP addresses to match your actual external service locations
+#
+#########################################################################
+#########################################################################
+
+http:
+  routers:
+    router-audiobooks-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`audiobooks.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-audiobooks-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-homepage-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`glance.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-homepage-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-books-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`books.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-books-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-casaos-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`casaos.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-casaos-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-dns-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`dns.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-dns-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-jellyfin-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`jellyfin-ext.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-jellyfin-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-proxmox-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`proxmox.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-proxmox-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-plex-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`plex-ext.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-plex-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-portainer-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`portainer-ext.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-portainer-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-search-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`search.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-search-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-speedtest-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`speed.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-speedtest-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+    router-traefik-dashboard-external:
+      entryPoints:
+        - secureweb
+      rule: "Host(`traefik-ext.${CLOUDFLARE_DNS_ZONE}`)"
+      service: service-traefik-dashboard-external
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - authentik-forwardauth@file
+        - security-headers@file
+        - traefik-bouncer@file
+
+  services:
+    service-audiobooks-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.119:13378"
+
+    service-homepage-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.28:8080"
+
+    service-books-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.118:6060"
+
+    service-casaos-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.27:80"
+
+    service-dns-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.103:5380"
+
+    service-jellyfin-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.158:8096"
+
+    service-proxmox-external:
+      loadBalancer:
+        servers:
+          - url: "https://172.15.48.23:8006"
+        serversTransport: insecure-skip-verify-external
+
+    service-plex-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.156:32400"
+
+    service-portainer-external:
+      loadBalancer:
+        servers:
+          - url: "https://172.15.48.101:9443"
+        serversTransport: insecure-skip-verify-external
+
+    service-search-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.108:8888"
+
+    service-speedtest-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.107:8080"
+
+    service-traefik-dashboard-external:
+      loadBalancer:
+        servers:
+          - url: "http://172.15.48.101:8080"
+
+  serversTransports:
+    insecure-skip-verify-external:
+      insecureSkipVerify: true

@@ -1,0 +1,45 @@
+###########################################################################
+###########################################################################
+##
+##  Docker Compose File: Caddy 2
+##  Function: High-performance static file webserver
+##
+###########################################################################
+###########################################################################
+
+services:
+  caddy-static-site:
+    image: caddy:2-alpine
+    container_name: caddy-static-site
+    restart: unless-stopped
+    user: ${PUID:?err}:${PGID:?err}
+    networks:
+      - mediastack
+    volumes:
+      # These paths are relative to your docker-compose.yaml location
+      - /home/sadmin/caddy/config:/etc/caddy
+      - /home/sadmin/caddy/site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+    labels:
+      - traefik.enable=true
+    # ROUTERS
+      # --- IMPORTANT: Change 'static-site' to your desired subdomain ---
+      - traefik.http.routers.caddy-static-site.rule=Host(`files.${CLOUDFLARE_DNS_ZONE:?err}`)
+      - traefik.http.routers.caddy-static-site.entrypoints=secureweb
+      - traefik.http.routers.caddy-static-site.service=caddy-static-site
+      # (Optional) Reuse your security headers middleware for good practice
+      # - traefik.http.routers.caddy-static-site.middlewares=security-headers-trusted@file
+
+    # SERVICES
+      - traefik.http.services.caddy-static-site.loadbalancer.server.scheme=http
+      # Caddy listens on port 80 internally
+      - traefik.http.services.caddy-static-site.loadbalancer.server.port=80
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  mediastack:
+    external: true

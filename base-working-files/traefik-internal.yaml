@@ -14,44 +14,29 @@
 
 http:
   routers:
-    synology:                                # Synology DSM
-      rule: "Host(`synology.example.com`)"
-      service: synology
-      entryPoints:
-        - secureweb
-      tls:
-        certResolver: letsencrypt
-      middlewares:
-        - authentik-forwardauth@file
-        - security-headers@file
-        - traefik-bouncer@file
-
-    gateway:                                 # Ubiquiti Dream Machine
-      rule: "Host(`gateway.example.com`)"
-      service: gateway
-      entryPoints:
-        - secureweb
-      tls:
-        certResolver: letsencrypt
-      middlewares:
-        - authentik-forwardauth@file
-        - security-headers@file
-        - traefik-bouncer@file
+    # Add your internal network services here
+    # Example:
+    # router-name:
+    #   rule: "Host(`service.${CLOUDFLARE_DNS_ZONE}`)"
+    #   service: service-name
+    #   entryPoints:
+    #     - secureweb
+    #   tls:
+    #     certResolver: letsencrypt
+    #   middlewares:
+    #     - authentik-forwardauth@file
+    #     - security-headers@file
+    #     - traefik-bouncer@file
 
   services:
-    synology:
-      loadBalancer:
-        servers:
-          - url: "https://192.168.1.8:5001"   # Synology Web UI - HTTP (Insecure)
-        passHostHeader: true
-        serversTransport: insecure-no-verify          
-
-    gateway:
-      loadBalancer:
-        servers:
-          - url: "https://192.168.1.1"        # Ubiquiti Web UI - HTTPS
-        passHostHeader: true
-        serversTransport: insecure-no-verify
+    # Add your internal network service definitions here
+    # Example:
+    # service-name:
+    #   loadBalancer:
+    #     servers:
+    #       - url: "https://192.168.1.x:port"
+    #     passHostHeader: true
+    #     serversTransport: insecure-no-verify
 
   serversTransports:
     insecure-no-verify:
