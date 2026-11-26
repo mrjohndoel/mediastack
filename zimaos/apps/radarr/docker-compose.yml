@@ -1,0 +1,35 @@
+services:
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:radarr"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "7878"
+        target: 7878
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/radarr.png
+  id: mediastack-radarr
+  index: /
+  main: radarr
+  port_map: "7878"
+  scheme: http
+  title:
+    en_US: Radarr
+    custom: Radarr
+  category: MediaStack
+  hostname: ""

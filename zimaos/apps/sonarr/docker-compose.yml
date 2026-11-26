@@ -1,0 +1,35 @@
+services:
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:sonarr"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "8989"
+        target: 8989
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/sonarr.png
+  id: mediastack-sonarr
+  index: /
+  main: sonarr
+  port_map: "8989"
+  scheme: http
+  title:
+    en_US: Sonarr
+    custom: Sonarr
+  category: MediaStack
+  hostname: ""

@@ -1,0 +1,35 @@
+services:
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:bazarr"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "6767"
+        target: 6767
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bazarr.png
+  id: mediastack-bazarr
+  index: /
+  main: bazarr
+  port_map: "6767"
+  scheme: http
+  title:
+    en_US: Bazarr
+    custom: Bazarr
+  category: MediaStack
+  hostname: ""

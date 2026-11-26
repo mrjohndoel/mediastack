@@ -1,0 +1,37 @@
+services:
+  ddns-updater:
+    container_name: ddns-updater
+    image: qmcgaw/ddns-updater:latest
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: "Europe/Zurich"
+      UMASK: "0002"
+      PERIOD: "5m"
+      UPDATE_COOLDOWN_PERIOD: "5m"
+      LISTENING_ADDRESS: ":8310"
+      ROOT_URL: "/"
+      BACKUP_PERIOD: "0"
+      BACKUP_DIRECTORY: "/updater/data"
+      LOG_LEVEL: "info"
+    ports:
+      - protocol: tcp
+        published: "8310"
+        target: 8310
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /updater/data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/ddns-updater.png
+  id: mediastack-ddns-updater
+  index: /
+  main: ddns-updater
+  port_map: "8310"
+  scheme: http
+  title:
+    en_US: Ddns-updater
+    custom: Ddns-updater
+  category: MediaStack
+  hostname: ""

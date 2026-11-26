@@ -1,0 +1,35 @@
+services:
+  readarr:
+    container_name: readarr
+    image: lscr.io/linuxserver/readarr:0.4.18-develop
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:readarr"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "8787"
+        target: 8787
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/readarr.png
+  id: mediastack-readarr
+  index: /
+  main: readarr
+  port_map: "8787"
+  scheme: http
+  title:
+    en_US: Readarr
+    custom: Readarr
+  category: MediaStack
+  hostname: ""

@@ -1,0 +1,29 @@
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:latest
+    restart: unless-stopped
+    ports:
+      - protocol: tcp
+        published: "9000"
+        target: 9000
+    volumes:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - source: /DATA/AppData/$AppID/config
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/portainer.png
+  id: mediastack-portainer
+  index: /
+  main: portainer
+  port_map: "9000"
+  scheme: http
+  title:
+    en_US: Portainer
+    custom: Portainer
+  category: MediaStack
+  hostname: ""

@@ -1,0 +1,34 @@
+services:
+  chromium:
+    container_name: chromium
+    image: lscr.io/linuxserver/chromium:latest
+    restart: unless-stopped
+    shm_size: 1gb
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      TITLE: "MediaStack Chromium"
+      CUSTOM_PORT: "3650"
+      CHROME_CLI: "https://github.com/geekau/mediastack/"
+    ports:
+      - protocol: tcp
+        published: "3650"
+        target: 3650
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/chromium.png
+  id: mediastack-chromium
+  index: /
+  main: chromium
+  port_map: "3650"
+  scheme: http
+  title:
+    en_US: Chromium
+    custom: Chromium
+  category: MediaStack
+  hostname: ""

@@ -1,0 +1,32 @@
+services:
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:develop
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:prowlarr"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "9696"
+        target: 9696
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/prowlarr.png
+  id: mediastack-prowlarr
+  index: /
+  main: prowlarr
+  port_map: "9696"
+  scheme: http
+  title:
+    en_US: Prowlarr
+    custom: Prowlarr
+  category: MediaStack
+  hostname: ""

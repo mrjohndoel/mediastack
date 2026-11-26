@@ -1,0 +1,27 @@
+services:
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: unless-stopped
+    environment:
+      LOG_LEVEL: "info"
+      LOG_HTML: "false"
+      CAPTCHA_SOLVER: "none"
+      TZ: "Europe/Zurich"
+    ports:
+      - protocol: tcp
+        published: "8191"
+        target: 8191
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/flaresolverr.png
+  id: mediastack-flaresolverr
+  index: /
+  main: flaresolverr
+  port_map: "8191"
+  scheme: http
+  title:
+    en_US: Flaresolverr
+    custom: Flaresolverr
+  category: MediaStack
+  hostname: ""

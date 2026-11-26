@@ -1,0 +1,35 @@
+services:
+  mylar:
+    container_name: mylar
+    image: lscr.io/linuxserver/mylar3:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:mylar3"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "8090"
+        target: 8090
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/mylar3.png
+  id: mediastack-mylar
+  index: /
+  main: mylar
+  port_map: "8090"
+  scheme: http
+  title:
+    en_US: Mylar
+    custom: Mylar
+  category: MediaStack
+  hostname: ""

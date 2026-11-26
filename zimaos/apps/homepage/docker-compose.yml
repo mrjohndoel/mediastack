@@ -1,0 +1,33 @@
+services:
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage:latest
+    restart: unless-stopped
+    environment:
+      UMASK: "0002"
+      TZ: "Europe/Zurich"
+      HOMEPAGE_ALLOWED_HOSTS: "*"
+    ports:
+      - protocol: tcp
+        published: "3000"
+        target: 3000
+    volumes:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - source: /DATA/AppData/$AppID/config
+        target: /app/config
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/homepage.png
+  id: mediastack-homepage
+  index: /
+  main: homepage
+  port_map: "3000"
+  scheme: http
+  title:
+    en_US: Homepage
+    custom: Homepage
+  category: MediaStack
+  hostname: ""

@@ -1,0 +1,40 @@
+services:
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      UMASK: "0002"
+    ports:
+      - protocol: tcp
+        published: "3200"
+        target: 7575
+    volumes:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - source: /DATA/AppData/$AppID/config/configs
+        target: /app/data/configs
+        type: bind
+      - source: /DATA/AppData/$AppID/config/icons
+        target: /app/public/icons
+        type: bind
+      - source: /DATA/AppData/$AppID/config/data
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/homarr.png
+  id: mediastack-homarr
+  index: /
+  main: homarr
+  port_map: "3200"
+  scheme: http
+  title:
+    en_US: Homarr
+    custom: Homarr
+  category: MediaStack
+  hostname: ""

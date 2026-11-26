@@ -1,0 +1,31 @@
+services:
+  heimdall:
+    container_name: heimdall
+    image: lscr.io/linuxserver/heimdall:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      UMASK: "0002"
+    ports:
+      - protocol: tcp
+        published: "2080"
+        target: 80
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/heimdall.png
+  id: mediastack-heimdall
+  index: /
+  main: heimdall
+  port_map: "2080"
+  scheme: http
+  title:
+    en_US: Heimdall
+    custom: Heimdall
+  category: MediaStack
+  hostname: ""

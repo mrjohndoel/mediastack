@@ -1,0 +1,28 @@
+services:
+  seerr:
+    container_name: seerr
+    image: ghcr.io/seerr-team/seerr:latest
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Zurich"
+    ports:
+      - protocol: tcp
+        published: "5055"
+        target: 5055
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /app/config
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/seerr.png
+  id: mediastack-seerr
+  index: /
+  main: seerr
+  port_map: "5055"
+  scheme: http
+  title:
+    en_US: Seerr
+    custom: Seerr
+  category: MediaStack
+  hostname: ""

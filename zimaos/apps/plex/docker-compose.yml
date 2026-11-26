@@ -1,0 +1,36 @@
+services:
+  plex:
+    container_name: plex
+    image: lscr.io/linuxserver/plex:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      UMASK: "0002"
+      VERSION: "docker"
+      PLEX_CLAIM: ""
+    ports:
+      - protocol: tcp
+        published: "32400"
+        target: 32400
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media/media
+        target: /data/media
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/plex.png
+  id: mediastack-plex
+  index: /web
+  main: plex
+  port_map: "32400"
+  scheme: http
+  title:
+    en_US: Plex
+    custom: Plex
+  category: MediaStack
+  hostname: ""

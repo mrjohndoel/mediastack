@@ -1,0 +1,43 @@
+services:
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      UMASK: "0002"
+      WEBUI_PORT: "8200"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:qbittorrent"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "8200"
+        target: 8200
+      - protocol: tcp
+        published: "6881"
+        target: 6881
+      - protocol: udp
+        published: "6881"
+        target: 6881
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/qbittorrent.png
+  id: mediastack-qbittorrent
+  index: /
+  main: qbittorrent
+  port_map: "8200"
+  scheme: http
+  title:
+    en_US: Qbittorrent
+    custom: Qbittorrent
+  category: MediaStack
+  hostname: ""

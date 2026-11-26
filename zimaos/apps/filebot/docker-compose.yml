@@ -1,0 +1,35 @@
+services:
+  filebot:
+    container_name: filebot
+    image: rednoah/filebot:xpra
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      UMASK: "0002"
+      DARK_MODE: "1"
+    ports:
+      - protocol: tcp
+        published: "5454"
+        target: 5454
+    volumes:
+      - source: /DATA/Media/filebot
+        target: /filebot
+        type: bind
+      - source: /DATA/AppData/$AppID/config
+        target: /data/filebot
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/filebot.png
+  id: mediastack-filebot
+  index: /
+  main: filebot
+  port_map: "5454"
+  scheme: http
+  title:
+    en_US: Filebot
+    custom: Filebot
+  category: MediaStack
+  hostname: ""

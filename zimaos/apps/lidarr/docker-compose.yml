@@ -1,0 +1,35 @@
+services:
+  lidarr:
+    container_name: lidarr
+    image: lscr.io/linuxserver/lidarr:latest
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Zurich"
+      DOCKER_MODS: "ghcr.io/themepark-dev/theme.park:lidarr"
+      TP_THEME: "nord"
+    ports:
+      - protocol: tcp
+        published: "8686"
+        target: 8686
+    volumes:
+      - source: /DATA/AppData/$AppID/config
+        target: /config
+        type: bind
+      - source: /DATA/Media
+        target: /data
+        type: bind
+    network_mode: bridge
+x-casaos:
+  icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/lidarr.png
+  id: mediastack-lidarr
+  index: /
+  main: lidarr
+  port_map: "8686"
+  scheme: http
+  title:
+    en_US: Lidarr
+    custom: Lidarr
+  category: MediaStack
+  hostname: ""
